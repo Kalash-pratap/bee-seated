@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BEESEATED — The Animated Experience</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bee-gold: #F5C518;
+  --bee-gold-light: #FFDF6D;
+  --bee-black: #111111;
+  --bee-black-soft: #1E1C14;
+  --bee-cream: #FDFBF4;
+  --dur-fast: 140ms;
+  --dur-norm: 280ms;
+  --dur-slow: 480ms;
+  --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-squash: cubic-bezier(0.2, 0, 0, 1);
+  --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
+}
+body {
+  background: var(--bee-gold);
+  color: var(--bee-black);
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  user-select: none;
+}
+
+/* Background Subtle Hex Dot Grid */
+.hex-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(17,17,17,0.12) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+canvas#c {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 2;
+}
+
+/* Telemetry Header (Nothing OS × Bee Aesthetic) */
+.telemetry-header {
+  position: absolute;
+  top: 24px;
+  left: 32px;
+  right: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
+}
+.brand-mark-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+  background: rgba(17, 17, 17, 0.08);
+  backdrop-filter: blur(10px);
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(17, 17, 17, 0.15);
+  pointer-events: auto;
+}
+.dot-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bee-black);
+  box-shadow: 0 0 0 rgba(17, 17, 17, 0.4);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+@keyframes pulse-dot {
+  0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(17,17,17,0.5); }
+  70% { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(17,17,17,0); }
+  100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(17,17,17,0); }
+}
+.phase-monitor {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 6px 14px;
+  background: rgba(17, 17, 17, 0.08);
+  border: 1px solid rgba(17, 17, 17, 0.15);
+  border-radius: 6px;
+}
+
+/* Principle 19: Peak-End Rule Final Stage Action Cards */
+.final-action-dock {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%) translateY(30px);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-slow) var(--ease-editorial), transform var(--dur-slow) var(--ease-elastic);
+}
+.final-action-dock.active {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+.btn-action {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 14px 28px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  transition: transform var(--dur-fast) var(--ease-squash), box-shadow var(--dur-fast), background var(--dur-fast);
+  outline: none;
+  border: none;
+}
+/* Principle 4: Squash and Stretch */
+.btn-action:active {
+  transform: scale(0.94, 0.92);
+}
+.btn-replay {
+  background: var(--bee-black);
+  color: var(--bee-gold);
+  box-shadow: 0 10px 25px rgba(17,17,17,0.25);
+}
+.btn-replay:hover {
+  background: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(17,17,17,0.35);
+}
+.btn-proceed {
+  background: #FFFFFF;
+  color: var(--bee-black);
+  border: 2px solid var(--bee-black);
+  box-shadow: 0 10px 25px rgba(17,17,17,0.15);
+}
+.btn-proceed:hover {
+  background: #FFFBF0;
+  transform: translateY(-2px);
+}
+
+/* Audio / Interaction Hint */
+.interactive-hint {
+  position: absolute;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(17, 17, 17, 0.6);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 10;
+  pointer-events: none;
+}
+.interactive-hint.show {
+  opacity: 1;
+}
+
+@media(prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="hex-pattern"></div>
+
+<header class="telemetry-header">
+  <div class="brand-mark-top">
+    <span class="dot-pulse"></span>
+    <span>BEESEATED</span>
+  </div>
+  <div class="phase-monitor" id="phaseTelemetry">
+    PHASE 1: TAKEOFF INITIALIZED
+  </div>
+</header>
+
+<canvas id="c"></canvas>
+
+<div class="interactive-hint" id="interactiveHint">
+  [ CLICK CANVAS TO SCARE THE BEE • INTERRUPTIBLE FLIGHT DYNAMICS ]
+</div>
+
+<div class="final-action-dock" id="finalDock">
+  <button class="btn-action btn-replay" id="replayBtn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+    REPLAY FLIGHT
+  </button>
+  <a href="index.html" class="btn-action btn-proceed">
+    ENTER BEESEATED PLATFORM →
+  </a>
+</div>
+
+<script>
+/**
+ * BEESEATED — Complete Vector Engine & Motion Choreography
+ * Translating all 19 UX Principles into delta-time physics & vector rendering.
+ */
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const phaseTelemetry = document.getElementById('phaseTelemetry');
+const finalDock = document.getElementById('finalDock');
+const replayBtn = document.getElementById('replayBtn');
+const interactiveHint = document.getElementById('interactiveHint');
+
+let dpr = window.devicePixelRatio || 1;
+let width = window.innerWidth;
+let height = window.innerHeight;
+
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  width = window.innerWidth;
+  height = window.innerHeight;
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+  canvas.style.width = width + 'px';
+  canvas.style.height = height + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener('resize', resize);
+resize();
+
+// Principles 9, 5: Easing Mathematics
+function easeInOutCubic(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; }
+function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+function easeInCubic(t) { return t * t * t; }
+function easeOutElastic(t) {
+  const c4 = (2 * Math.PI) / 3;
+  return t === 0 ? 0 : t === 1 ? 1 : Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
+}
+function easeOutBack(t) {
+  const c1 = 1.70158;
+  const c3 = c1 + 1;
+  return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+}
+function lerp(a, b, t) { return a + (b - a) * t; }
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+// Phase Timeline Definition (Principles 14: Timing, 10: Hick's Law)
+const TIMELINE = {
+  anticipation: 0.8, // Principle 7: Anticipation squat before launch
+  takeoff: 2.2,
+  flight: 7.2,
+  approach: 8.8,
+  landing: 10.4,
+  morph: 12.8,
+  complete: 13.5
+};
+
+// Physics and State Tracking
+let state = {
+  time: 0,
+  lastTs: 0,
+  running: true,
+  animId: null,
+  trail: [],
+  interruptedSwirl: 0,
+  userDisturbances: []
+};
+
+// Catmull-Rom Smooth Organic Spline through Waypoints
+const waypoints = [
+  { x: 0.50, y: 0.40 },
+  { x: 0.58, y: 0.28 },
+  { x: 0.70, y: 0.22 },
+  { x: 0.78, y: 0.35 },
+  { x: 0.68, y: 0.48 },
+  { x: 0.52, y: 0.38 },
+  { x: 0.38, y: 0.24 },
+  { x: 0.25, y: 0.32 },
+  { x: 0.22, y: 0.46 },
+  { x: 0.34, y: 0.52 },
+  { x: 0.48, y: 0.38 },
+  { x: 0.54, y: 0.30 },
+  { x: 0.50, y: 0.42 }
+];
+
+function catmullRom(p0, p1, p2, p3, t) {
+  const t2 = t * t;
+  const t3 = t2 * t;
+  return 0.5 * (
+    (2 * p1) +
+    (-p0 + p2) * t +
+    (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 +
+    (-p0 + 3 * p1 - 3 * p2 + p3) * t3
+  );
+}
+
+function getSplinePos(progress) {
+  const n = waypoints.length - 1;
+  const p = clamp(progress, 0, 1) * n;
+  const i = Math.min(Math.floor(p), n - 1);
+  const lt = p - i;
+
+  const p0 = waypoints[Math.max(i - 1, 0)];
+  const p1 = waypoints[i];
+  const p2 = waypoints[Math.min(i + 1, n)];
+  const p3 = waypoints[Math.min(i + 2, n)];
+
+  return {
+    x: catmullRom(p0.x, p1.x, p2.x, p3.x, lt),
+    y: catmullRom(p0.y, p1.y, p2.y, p3.y, lt)
+  };
+}
+
+// Principle 15: Interruptible Motion (Click anywhere to deflect bee)
+window.addEventListener('pointerdown', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  state.userDisturbances.push({
+    x: mx,
+    y: my,
+    radius: 10,
+    maxRadius: 80,
+    life: 1.0
+  });
+  state.interruptedSwirl += 0.8;
+});
+
+// Dynamic Trail Renderer with broken dashes (Phase 2 Requirement)
+function renderDynamicTrail(ctx, trail, fadeFactor = 1) {
+  if (trail.length < 3) return;
+
+  const trailLength = trail.length;
+  // Approximately 6 segmented dashes before disappearance
+  for (let i = 2; i < trailLength; i += 2) {
+    const lifeRatio = i / trailLength;
+    const alpha = lifeRatio * 0.55 * fadeFactor;
+    if (alpha <= 0.01) continue;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(trail[i-1].x, trail[i-1].y);
+    ctx.lineTo(trail[i].x, trail[i].y);
+    ctx.strokeStyle = `rgba(17, 17, 17, ${alpha})`;
+    ctx.lineWidth = 2.4 * lifeRatio;
+    ctx.lineCap = 'round';
+    ctx.setLineDash([4, 8]); // Broken dashed flight trail
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+// ----------------------------------------------------------------------------
+// VECTOR RENDERER A: Cute Sitting Bee (Round, yellow & black, cute feet, cheeks)
+// ----------------------------------------------------------------------------
+function drawCuteSittingBee(ctx, x, y, scale, wingPhase, sitProgress, tiltAngle = 0, squashX = 1, squashY = 1, opacity = 1) {
+  ctx.save();
+  ctx.globalAlpha = clamp(opacity, 0, 1);
+  ctx.translate(x, y);
+  ctx.rotate(tiltAngle);
+  ctx.scale(scale * squashX, scale * squashY);
+
+  const flap = Math.sin(wingPhase) * 0.65;
+
+  // Wings (Translucent with delicate veins)
+  ctx.save();
+  ctx.translate(-8, -22);
+  ctx.rotate(-0.4 + flap);
+  ctx.beginPath();
+  ctx.ellipse(0, -18, 14, 26, -0.1, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(17, 17, 17, 0.18)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(8, -22);
+  ctx.rotate(0.4 - flap);
+  ctx.beginPath();
+  ctx.ellipse(0, -18, 14, 26, 0.1, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(17, 17, 17, 0.18)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.restore();
+
+  // Round Chunky Body
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 26, 21, 0, 0, Math.PI * 2);
+  ctx.fillStyle = '#FFD000';
+  ctx.fill();
+  ctx.strokeStyle = '#111111';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Body Stripes (Clipped cleanly)
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 26, 21, 0, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.fillStyle = '#111111';
+  ctx.fillRect(-30, -11, 60, 5.5);
+  ctx.fillRect(-30, 1, 60, 5.5);
+  ctx.fillRect(-30, 12, 60, 4.5);
+  ctx.restore();
+
+  // Tiny Cute Stinger
+  ctx.beginPath();
+  ctx.moveTo(25, -2);
+  ctx.lineTo(33, 1);
+  ctx.lineTo(25, 4);
+  ctx.closePath();
+  ctx.fillStyle = '#111111';
+  ctx.fill();
+
+  // Head (Black dome)
+  ctx.beginPath();
+  ctx.arc(-24, -4, 16, 0, Math.PI * 2);
+  ctx.fillStyle = '#111111';
+  ctx.fill();
+
+  // Big Kawaii Eye
+  ctx.beginPath();
+  ctx.arc(-20, -7, 6, 0, Math.PI * 2);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(-18.5, -7, 3.2, 0, Math.PI * 2);
+  ctx.fillStyle = '#111111';
+  ctx.fill();
+  // Sparkle highlight
+  ctx.beginPath();
+  ctx.arc(-17.5, -8.5, 1.4, 0, Math.PI * 2);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fill();
+
+  // Cheerful Rosy Cheek
+  ctx.beginPath();
+  ctx.arc(-28, 4, 4.2, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255, 100, 100, 0.45)';
+  ctx.fill();
+
+  // Cute Smile
+  ctx.beginPath();
+  ctx.arc(-22, 1, 4, 0.2, Math.PI * 0.8);
+  ctx.strokeStyle = '#FFFFFF';
+  ctx.lineWidth = 1.4;
+  ctx.stroke();
+
+  // Curved Antennae with Ball Caps
+  ctx.strokeStyle = '#111111';
+  ctx.lineWidth = 2.2;
+  ctx.lineCap = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(-31, -16);
+  ctx.quadraticCurveTo(-40, -32, -45, -36);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(-45.5, -37, 2.8, 0, Math.PI * 2);
+  ctx.fillStyle = '#111111'; ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(-25, -18);
+  ctx.quadraticCurveTo(-28, -35, -23, -40);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(-22.5, -41, 2.8, 0, Math.PI * 2);
+  ctx.fillStyle = '#111111'; ctx.fill();
+
+  // Seated Legs (Stick out forward when sitting)
+  const legExt = clamp(sitProgress, 0, 1);
+  if (legExt > 0.05) {
+    ctx.strokeStyle = '#111111';
+    ctx.lineWidth = 2.6;
+    ctx.lineCap = 'round';
+
+    // Front little feet pointing forward
+    ctx.beginPath();
+    ctx.moveTo(-11, 18);
+    ctx.lineTo(-18, 18 + legExt * 10);
+    ctx.lineTo(-24, 18 + legExt * 8);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(-1, 19);
+    ctx.lineTo(-7, 19 + legExt * 11);
+    ctx.lineTo(-13, 19 + legExt * 9);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(11, 18);
+    ctx.lineTo(17, 18 + legExt * 10);
+    ctx.lineTo(23, 18 + legExt * 8);
+    ctx.stroke();
+
+    // Cute tiny resting hands on tummy
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-18, 8);
+    ctx.lineTo(-24, 12 + legExt * 2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(12, 8);
+    ctx.lineTo(18, 12 + legExt * 2);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+// ----------------------------------------------------------------------------
+// VECTOR RENDERER B: Official SEATED Logo (Exact match to uploaded master image)
+// ----------------------------------------------------------------------------
+function drawOfficialSeatedLogo(ctx, x, y, scale, opacity = 1) {
+  ctx.save();
+  ctx.globalAlpha = clamp(opacity, 0, 1);
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+
+  const B = '#111111';
+  const Y = '#F5C518';
+
+  // 1. Black Head
+  ctx.beginPath();
+  ctx.arc(-62, 4, 19, 0, Math.PI * 2);
+  ctx.fillStyle = B;
+  ctx.fill();
+
+  // 2. Head Eye Cutout & Pupil
+  ctx.beginPath();
+  ctx.ellipse(-55, -1, 7, 6.5, -0.1, 0, Math.PI * 2);
+  ctx.fillStyle = Y;
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(-53, -1, 3, 0, Math.PI * 2);
+  ctx.moveTo(-53, 1);
+  ctx.quadraticCurveTo(-51, 6, -54, 7);
+  ctx.fillStyle = B;
+  ctx.fill();
+
+  // 3. Antennae
+  ctx.strokeStyle = B;
+  ctx.lineWidth = 3.6;
+  ctx.lineCap = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(-70, -12);
+  ctx.quadraticCurveTo(-85, -36, -90, -42);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(-90.5, -43, 4, 0, Math.PI * 2);
+  ctx.fillStyle = B; ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(-59, -14);
+  ctx.quadraticCurveTo(-63, -38, -55, -45);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(-54.5, -46, 4, 0, Math.PI * 2);
+  ctx.fillStyle = B; ctx.fill();
+
+  // 4. Iconic Teardrop Double Wings with Yellow Cutouts
+  // Back Wing
+  ctx.save();
+  ctx.translate(-30, -16);
+  ctx.rotate(0.18);
+  ctx.beginPath();
+  ctx.ellipse(8, -26, 17, 30, 0.12, 0, Math.PI * 2);
+  ctx.fillStyle = B; ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(8, -26, 10, 20, 0.12, 0, Math.PI * 2);
+  ctx.fillStyle = Y; ctx.fill();
+  ctx.restore();
+
+  // Front Wing
+  ctx.save();
+  ctx.translate(-48, -16);
+  ctx.rotate(-0.25);
+  ctx.beginPath();
+  ctx.ellipse(-6, -26, 19, 34, -0.08, 0, Math.PI * 2);
+  ctx.fillStyle = B; ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(-6, -26, 11, 23, -0.08, 0, Math.PI * 2);
+  ctx.fillStyle = Y; ctx.fill();
+  ctx.restore();
+
+  // 5. Tapered Silhouette Body with Integrated Stinger
+  ctx.beginPath();
+  ctx.moveTo(-46, -10);
+  ctx.bezierCurveTo(-22, -26, 40, -26, 76, -4);
+  ctx.lineTo(92, 3); // Stinger Sharp Tip
+  ctx.lineTo(76, 10);
+  ctx.bezierCurveTo(40, 28, -22, 28, -46, 16);
+  ctx.closePath();
+  ctx.fillStyle = B;
+  ctx.fill();
+
+  // 6. Integrated Typographic "SEATED" Letterforms
+  ctx.fillStyle = Y;
+  ctx.font = '800 24px "Space Grotesk", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.letterSpacing = '3px';
+  ctx.fillText('SEATED', 16, 3);
+
+  // Subtle Honeycomb Body Cutlines
+  ctx.strokeStyle = Y;
+  ctx.lineWidth = 1.8;
+  for (let ox = -18; ox <= 54; ox += 18) {
+    ctx.beginPath();
+    ctx.moveTo(ox, -18);
+    ctx.lineTo(ox, -12);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(ox, 18);
+    ctx.lineTo(ox, 12);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+// ----------------------------------------------------------------------------
+// ANIMATION CHOREOGRAPHY & REQUESTANIMATIONFRAME ENGINE (DELTA-TIME BASED)
+// ----------------------------------------------------------------------------
+function tick(timestamp) {
+  if (!state.running) return;
+  if (!state.lastTs) state.lastTs = timestamp;
+  const dt = Math.min((timestamp - state.lastTs) / 1000, 0.05); // Cap to avoid hitching
+  state.lastTs = timestamp;
+  state.time += dt;
+
+  // Clear Canvas (Solid Bee Gold)
+  ctx.fillStyle = '#F5C518';
+  ctx.fillRect(0, 0, width, height);
+
+  // Home Resting Coordinates (Centred on Screen)
+  const homeX = width * 0.50;
+  const homeY = height * 0.52;
+  const baseScale = Math.min(width, height) / 380;
+
+  // Render User Interruptions (Principle 15)
+  for (let i = state.userDisturbances.length - 1; i >= 0; i--) {
+    const ud = state.userDisturbances[i];
+    ud.radius += dt * 120;
+    ud.life -= dt * 1.5;
+    if (ud.life <= 0) {
+      state.userDisturbances.splice(i, 1);
+    } else {
+      ctx.beginPath();
+      ctx.arc(ud.x, ud.y, ud.radius, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(17, 17, 17, ${ud.life * 0.25})`;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+  }
+
+  const t = state.time;
+
+  // --------------------------------------------------------------------------
+  // PHASE 0: ANTICIPATION (Principle 7: Anticipation, 4: Squash before launch)
+  // --------------------------------------------------------------------------
+  if (t < TIMELINE.anticipation) {
+    phaseTelemetry.textContent = 'TELEMETRY • ANTICIPATING FLIGHT';
+    const p = t / TIMELINE.anticipation;
+    const squash = 1 - Math.sin(p * Math.PI) * 0.14;
+    const stretch = 1 + Math.sin(p * Math.PI) * 0.12;
+
+    drawCuteSittingBee(ctx, homeX, homeY + (1 - squash) * 20, baseScale, t * 14, 1, 0, stretch, squash, 1);
+  }
+
+  // --------------------------------------------------------------------------
+  // PHASE 1: BEE TAKES FLIGHT (Principle 1: Exaggeration, 9: Slow in/out)
+  // --------------------------------------------------------------------------
+  else if (t < TIMELINE.takeoff) {
+    phaseTelemetry.textContent = 'PHASE 1: TAKEOFF & ASCENT';
+    const progress = (t - TIMELINE.anticipation) / (TIMELINE.takeoff - TIMELINE.anticipation);
+    const easeP = easeInOutCubic(progress);
+
+    const liftY = lerp(homeY, height * 0.38, easeP);
+    const sitProgress = 1 - easeP; // Legs retract into flight pose
+    const wingSpeed = lerp(18, 38, easeP); // Wings flutter continuously
+
+    drawCuteSittingBee(ctx, homeX, liftY, baseScale, t * wingSpeed, sitProgress, -easeP * 0.12, 1, 1, 1);
+  }
+
+  // --------------------------------------------------------------------------
+  // PHASE 2: DYNAMIC FLIGHT TRAIL & SWIRLS (Principle 12: Arcs, 2: Origin trail)
+  // --------------------------------------------------------------------------
+  else if (t < TIMELINE.flight) {
+    phaseTelemetry.textContent = 'PHASE 2: ORGANIC DYNAMIC SWIRL FLIGHT';
+    interactiveHint.classList.add('show');
+    const progress = (t - TIMELINE.takeoff) / (TIMELINE.flight - TIMELINE.takeoff);
+    const splinePos = getSplinePos(progress);
+
+    // Apply interactive user deflection swirl if clicked
+    let px = splinePos.x * width;
+    let py = splinePos.y * height;
+    if (state.interruptedSwirl > 0) {
+      px += Math.sin(t * 12) * state.interruptedSwirl * 14;
+      py += Math.cos(t * 12) * state.interruptedSwirl * 14;
+      state.interruptedSwirl = Math.max(0, state.interruptedSwirl - dt * 1.2);
+    }
+
+    // Direction-based orientation tilt (Follow-through Principle 11)
+    let bodyAngle = 0;
+    if (state.trail.length > 1) {
+      const last = state.trail[state.trail.length - 1];
+      const dx = px - last.x;
+      const dy = py - last.y;
+      bodyAngle = Math.atan2(dy, dx) * 0.32;
+    }
+
+    // Record trail
+    state.trail.push({ x: px, y: py });
+    if (state.trail.length > 55) state.trail.shift();
+
+    // Render trail with progressive erasure
+    renderDynamicTrail(ctx, state.trail, 1);
+
+    // Fast flutter wings during high-speed cruise
+    drawCuteSittingBee(ctx, px, py, baseScale, t * 44, 0, bodyAngle, 1, 1, 1);
+  }
+
+  // --------------------------------------------------------------------------
+  // PHASE 3: NATURAL LANDING (Principle 5: Rubber banding, 11: Follow-through)
+  // --------------------------------------------------------------------------
+  else if (t < TIMELINE.landing) {
+    phaseTelemetry.textContent = 'PHASE 3: DECELERATION & SEATED LANDING';
+    interactiveHint.classList.remove('show');
+    const progress = (t - TIMELINE.flight) / (TIMELINE.landing - TIMELINE.flight);
+    const easeLanding = easeOutCubic(progress);
+
+    const startPos = getSplinePos(1);
+    const px = lerp(startPos.x * width, homeX, easeLanding);
+    const py = lerp(startPos.y * height, homeY, easeLanding);
+
+    // Fade trail to complete erasure (Phase 2 requirement)
+    if (state.trail.length > 0) {
+      state.trail.splice(0, Math.ceil(state.trail.length * dt * 4));
+    }
+    renderDynamicTrail(ctx, state.trail, 1 - easeLanding);
+
+    // Legs return to cute seated position with subtle bounce
+    const sitProgress = easeOutBack(clamp(progress * 1.25 - 0.2, 0, 1));
+    const landingImpactSquash = 1 - Math.sin(clamp(progress, 0.8, 1) * Math.PI) * 0.08;
+    const landingImpactStretch = 1 + Math.sin(clamp(progress, 0.8, 1) * Math.PI) * 0.08;
+
+    const wingSpeed = lerp(34, 4, easeLanding);
+
+    drawCuteSittingBee(ctx, px, py, baseScale, t * wingSpeed, sitProgress, 0, landingImpactStretch, landingImpactSquash, 1);
+  }
+
+  // --------------------------------------------------------------------------
+  // PHASE 4: CONTINUOUS BEE-TO-LOGO TRANSFORMATION (The Most Important Part)
+  // --------------------------------------------------------------------------
+  else if (t < TIMELINE.morph) {
+    phaseTelemetry.textContent = 'PHASE 4: MORPHING BEE → SEATED LOGO';
+    state.trail = [];
+    const progress = (t - TIMELINE.landing) / (TIMELINE.morph - TIMELINE.landing);
+
+    // Overlapping visual morph (Principle 17: Solid drawing, 9: Slow in/out)
+    const beeOpacity = 1 - easeInCubic(clamp(progress * 1.4, 0, 1));
+    const logoOpacity = easeOutCubic(clamp((progress - 0.15) / 0.85, 0, 1));
+
+    // Bee gently settles and shrinks slightly to match core logo silhouette
+    if (beeOpacity > 0.01) {
+      const morphScale = baseScale * lerp(1, 0.94, easeInOutCubic(progress));
+      drawCuteSittingBee(ctx, homeX, homeY, morphScale, t * 3, 1, 0, 1, 1, beeOpacity);
+    }
+
+    // Logo emerges with smooth scale settling (Rubber banding Principle 5)
+    if (logoOpacity > 0.01) {
+      const logoScale = baseScale * lerp(1.18, 1.0, easeOutBack(clamp((progress - 0.15) / 0.85, 0, 1)));
+      drawOfficialSeatedLogo(ctx, homeX, homeY, logoScale, logoOpacity);
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // PHASE 5: CLEAN FINAL LOGO & ACTION DOCK (Principle 19: Peak-End Rule)
+  // --------------------------------------------------------------------------
+  else {
+    phaseTelemetry.textContent = 'PHASE 5: BEESEATED BRAND MARK ACTIVE';
+    state.trail = [];
+    drawOfficialSeatedLogo(ctx, homeX, homeY, baseScale, 1);
+    finalDock.classList.add('active');
+  }
+
+  if (state.running) {
+    state.animId = requestAnimationFrame(tick);
+  }
+}
+
+// Reset & Replay Controller (Preventing loop duplication)
+function restartAnimation() {
+  state.time = 0;
+  state.lastTs = 0;
+  state.trail = [];
+  state.interruptedSwirl = 0;
+  state.userDisturbances = [];
+  finalDock.classList.remove('active');
+  interactiveHint.classList.remove('show');
+
+  if (state.animId) cancelAnimationFrame(state.animId);
+  state.running = true;
+  state.animId = requestAnimationFrame(tick);
+}
+
+replayBtn.addEventListener('click', restartAnimation);
+
+// Start on load
+restartAnimation();
+</script>
+
+</body>
+</html>

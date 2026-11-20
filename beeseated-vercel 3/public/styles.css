@@ -1,0 +1,894 @@
+/* ==========================================================================
+   BEESEATED DESIGN SYSTEM — BEE AESTHETIC × NOTHING OS × EDITORIAL
+   Golden Amber (#F5C518), Deep Black (#111111), Honeycomb Accents
+   Full Implementation of all 19 UX & Motion Principles
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+  /* Core Brand Colors (Matching User Bee Logo Image) */
+  --bee-gold: #F5C518;
+  --bee-gold-light: #FFDF6D;
+  --bee-gold-soft: #FFF9E6;
+  --bee-black: #111111;
+  --bee-black-soft: #1E1C14;
+  --bee-dark-surface: #18160E;
+
+  /* Theme: Light */
+  --bg-primary: #FAF8F2;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #F3EFE3;
+  --bg-surface-translucent: rgba(255, 255, 255, 0.88);
+
+  --text-primary: #111111;
+  --text-secondary: #4A4638;
+  --text-muted: #7E7866;
+  --text-tertiary: #A6A08D;
+
+  --border-light: #E8E2D1;
+  --border-medium: #D4CBBA;
+  --border-strong: #111111;
+
+  /* Accent: Bee Gold & Honey Glow */
+  --accent-gold: #F5C518;
+  --accent-gold-hover: #E0B20D;
+  --accent-gold-glow: rgba(245, 197, 24, 0.35);
+
+  /* Seat Map States */
+  --seat-avail-bg: #FFFFFF;
+  --seat-avail-border: #D4CBBA;
+  --seat-selected-bg: #111111;
+  --seat-selected-border: #F5C518;
+  --seat-selected-color: #F5C518;
+  --seat-held-bg: #FFF3CD;
+  --seat-held-border: #FFEBAA;
+  --seat-booked-bg: #EAE6DC;
+  --seat-booked-border: #D8D2C4;
+  --seat-accessible-border: #3A86FF;
+
+  /* Typography */
+  --font-heading: 'Space Grotesk', -apple-system, sans-serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'Space Mono', monospace;
+
+  /* Timing Tokens (Principle 14: Timing) */
+  --dur-instant: 75ms;
+  --dur-fast: 140ms;
+  --dur-norm: 260ms;
+  --dur-slow: 420ms;
+  --dur-epic: 680ms;
+
+  /* Easing Tokens (Principle 9: Slow in, slow out & Principle 5: Rubber banding) */
+  --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-squash: cubic-bezier(0.2, 0, 0, 1);
+  --ease-rubber: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-arc: cubic-bezier(0.25, 1, 0.5, 1);
+
+  /* Elevation */
+  --shadow-sm: 0 1px 3px rgba(17, 17, 17, 0.05);
+  --shadow-md: 0 4px 16px rgba(17, 17, 17, 0.08);
+  --shadow-lg: 0 14px 34px rgba(17, 17, 17, 0.12);
+  --shadow-gold: 0 6px 24px rgba(245, 197, 24, 0.35);
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-full: 9999px;
+}
+
+/* Dark Mode Tokens */
+[data-theme="dark"] {
+  --bg-primary: #12110B;
+  --bg-surface: #1A1913;
+  --bg-surface-elevated: #24221A;
+  --bg-surface-translucent: rgba(26, 25, 19, 0.88);
+
+  --text-primary: #F8F6EF;
+  --text-secondary: #C4BFB0;
+  --text-muted: #8E8775;
+  --text-tertiary: #5E5848;
+
+  --border-light: #2D2A20;
+  --border-medium: #3D392C;
+  --border-strong: #F5C518;
+
+  --seat-avail-bg: #222018;
+  --seat-avail-border: #443F30;
+  --seat-selected-bg: #F5C518;
+  --seat-selected-border: #FFE066;
+  --seat-selected-color: #111111;
+  --seat-held-bg: #383014;
+  --seat-held-border: #5E4E1C;
+  --seat-booked-bg: #181712;
+  --seat-booked-border: #28261F;
+}
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  overflow-x: hidden;
+  transition: background-color var(--dur-norm) var(--ease-editorial), color var(--dur-norm) var(--ease-editorial);
+}
+
+/* Honeycomb Dot Matrix Background */
+.dot-matrix-bg {
+  background-image: radial-gradient(var(--border-medium) 1.3px, transparent 1.3px);
+  background-size: 24px 24px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.mono { font-family: var(--font-mono); }
+.mono-tech {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+/* Pulsing Bee Dot Indicator */
+.dot-pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--accent-gold);
+  box-shadow: 0 0 0 rgba(245, 197, 24, 0.4);
+  animation: pulse-dot 2s infinite var(--ease-standard);
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+@keyframes pulse-dot {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 197, 24, 0.7); }
+  70% { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(245, 197, 24, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 197, 24, 0); }
+}
+
+/* Header & Navigation Bar */
+.header-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--bg-surface-translucent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-light);
+  transition: border-color var(--dur-fast);
+}
+
+.nav-container {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* BEESEATED Brandmark */
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.brand-glyph-bee {
+  width: 36px;
+  height: 36px;
+  background: var(--accent-gold);
+  border: 2px solid var(--bee-black);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px var(--accent-gold-glow);
+  position: relative;
+  transition: transform var(--dur-fast) var(--ease-rubber);
+}
+.brand-glyph-bee:hover {
+  transform: scale(1.08) rotate(-4deg);
+}
+.brand-glyph-bee svg {
+  width: 24px;
+  height: 24px;
+}
+
+.brand-name {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: -0.04em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.brand-name span.brand-gold {
+  color: var(--text-primary);
+  background: var(--accent-gold);
+  padding: 0 6px;
+  border-radius: 4px;
+  margin-left: 2px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+}
+
+.nav-item-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-heading);
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--dur-fast), background var(--dur-fast);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav-item-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-surface-elevated);
+}
+.nav-item-btn.active {
+  color: var(--text-primary);
+  background: var(--bg-surface-elevated);
+  font-weight: 700;
+}
+
+/* Principle 4: Squash and Stretch on Primary CTA Buttons */
+.btn-primary {
+  background-color: var(--bee-black);
+  color: var(--bee-gold);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 10px 22px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--bee-black);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: transform var(--dur-fast) var(--ease-squash), background-color var(--dur-fast), box-shadow var(--dur-fast);
+}
+.btn-primary:hover {
+  background-color: #000;
+  box-shadow: var(--shadow-md);
+}
+.btn-primary:active {
+  transform: scale(0.96, 0.92);
+}
+
+/* Principle 13: Von Restorff Effect on Golden Honey Button */
+.btn-gold {
+  background-color: var(--accent-gold);
+  color: var(--bee-black);
+  border-color: var(--accent-gold);
+  box-shadow: 0 3px 14px var(--accent-gold-glow);
+}
+.btn-gold:hover {
+  background-color: var(--accent-gold-hover);
+  box-shadow: 0 6px 22px var(--accent-gold-glow);
+}
+
+.btn-secondary {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: transform var(--dur-fast) var(--ease-squash), background-color var(--dur-fast);
+}
+.btn-secondary:hover {
+  background-color: var(--bg-surface-elevated);
+  border-color: var(--text-primary);
+}
+.btn-secondary:active {
+  transform: scale(0.96, 0.92);
+}
+
+/* Hero Section */
+.hero-section {
+  padding: 64px 24px 84px;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: center;
+}
+@media (min-width: 992px) {
+  .hero-grid {
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 64px;
+  }
+}
+
+.hero-title {
+  font-size: clamp(2.6rem, 5.8vw, 4.4rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  margin-bottom: 24px;
+}
+.hero-title span.gold-highlight {
+  background: linear-gradient(180deg, transparent 65%, var(--accent-gold) 65%);
+  padding: 0 4px;
+}
+
+.hero-lead {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 540px;
+  margin-bottom: 36px;
+}
+
+.hero-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Interactive Hero Preview Card */
+.hero-visual-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 2px solid var(--border-strong);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--dur-norm) var(--ease-editorial);
+}
+.hero-visual-card:hover {
+  transform: translateY(-4px);
+}
+.hero-image-wrap {
+  width: 100%;
+  height: 440px;
+  position: relative;
+  overflow: hidden;
+  background: var(--bee-black);
+}
+.hero-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease-editorial);
+}
+.hero-visual-card:hover .hero-image-wrap img {
+  transform: scale(1.04);
+}
+
+.hero-card-footer {
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border-light);
+}
+
+/* Event Discovery Grid */
+.discovery-container {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+.discovery-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+@media (min-width: 768px) {
+  .discovery-controls {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.filter-pills-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.filter-pill {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--dur-fast);
+}
+.filter-pill:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+.filter-pill.active {
+  background: var(--text-primary);
+  color: var(--accent-gold);
+  border-color: var(--text-primary);
+  font-weight: 700;
+}
+
+.event-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+}
+@media (min-width: 640px) {
+  .event-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .event-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Principle 3: Staggered Event Cards */
+.event-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform var(--dur-norm) var(--ease-editorial), border-color var(--dur-norm), box-shadow var(--dur-norm);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: card-appear var(--dur-slow) var(--ease-editorial) forwards;
+  animation-delay: calc(var(--card-index, 0) * 60ms);
+}
+@keyframes card-appear {
+  to { opacity: 1; transform: translateY(0); }
+}
+.event-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-img-container {
+  height: 220px;
+  position: relative;
+  overflow: hidden;
+}
+.card-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease-editorial);
+}
+.event-card:hover .card-img-container img {
+  transform: scale(1.06);
+}
+
+.card-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* ==========================================================================
+   INTERACTIVE SEAT MAP (COMPONENT #7)
+   ========================================================================== */
+.seatmap-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 120px;
+}
+.seatmap-header-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.venue-stage-curved {
+  width: 70%;
+  max-width: 620px;
+  height: 42px;
+  margin: 20px auto 44px;
+  background: var(--bg-surface-elevated);
+  border: 2px dashed var(--border-medium);
+  border-radius: 50% / 100% 100% 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+/* Seat Grid Container */
+.seat-grid-scroll-box {
+  overflow-x: auto;
+  padding: 24px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.seat-grid-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 600px;
+}
+.seat-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.row-label {
+  width: 24px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+}
+.row-seats-group {
+  display: flex;
+  gap: 8px;
+}
+.row-aisle-gap {
+  width: 28px;
+}
+
+/* Geometric Honeycomb Seat Node */
+.seat {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1.5px solid var(--seat-avail-border);
+  background-color: var(--seat-avail-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  transition: transform var(--dur-fast) var(--ease-rubber), background-color var(--dur-fast), border-color var(--dur-fast);
+  user-select: none;
+}
+/* Principle 4: Squash and Stretch */
+.seat:active:not(.booked):not(.held) {
+  transform: scale(0.85);
+}
+.seat.available:hover {
+  transform: translateY(-2px) scale(1.1);
+  border-color: var(--bee-black);
+  box-shadow: 0 4px 10px rgba(17, 17, 17, 0.15);
+  z-index: 10;
+}
+/* Principle 13: Selected Seat in Bold Black & Gold */
+.seat.selected {
+  background-color: var(--seat-selected-bg);
+  border-color: var(--seat-selected-border);
+  color: var(--seat-selected-color);
+  font-weight: 700;
+  box-shadow: 0 3px 12px var(--accent-gold-glow);
+  transform: scale(1.08);
+  animation: seat-select-bounce var(--dur-norm) var(--ease-rubber);
+}
+@keyframes seat-select-bounce {
+  0% { transform: scale(0.8); }
+  65% { transform: scale(1.2); }
+  100% { transform: scale(1.08); }
+}
+
+.seat.held {
+  background-color: var(--seat-held-bg);
+  border-color: var(--seat-held-border);
+  color: #856404;
+  cursor: not-allowed;
+}
+.seat.booked {
+  background-color: var(--seat-booked-bg);
+  border-color: var(--seat-booked-border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.seat.accessible {
+  border: 2px solid var(--seat-accessible-border);
+}
+
+/* Origin Ripple Wave (Principle 2) */
+.origin-ripple {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-gold);
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(1);
+  animation: ripple-burst 450ms var(--ease-editorial) forwards;
+  z-index: 99;
+}
+@keyframes ripple-burst {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(6); opacity: 0; }
+}
+
+/* Floating Booking Dock (Principle 8: Fitts's Law) */
+.floating-booking-dock {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(120px);
+  width: calc(100% - 48px);
+  max-width: 780px;
+  background: var(--bg-surface);
+  border: 2px solid var(--bee-black);
+  border-radius: var(--radius-lg);
+  padding: 14px 22px;
+  box-shadow: 0 16px 45px rgba(17, 17, 17, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  z-index: 90;
+  transition: transform var(--dur-norm) var(--ease-rubber);
+}
+.floating-booking-dock.visible {
+  transform: translateX(-50%) translateY(0);
+}
+
+.dock-badge-counter {
+  background: var(--accent-gold);
+  color: var(--bee-black);
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+/* Modal Overlay & Digital Pass (Peak-End Rule) */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 17, 17, 0.7);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-norm) var(--ease-editorial);
+}
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-panel {
+  background: var(--bg-surface);
+  border: 2px solid var(--bee-black);
+  border-radius: var(--radius-lg);
+  max-width: 540px;
+  width: 100%;
+  padding: 32px;
+  box-shadow: var(--shadow-lg);
+  transform: scale(0.92) translateY(12px);
+  transition: transform var(--dur-norm) var(--ease-rubber);
+}
+.modal-overlay.active .modal-panel {
+  transform: scale(1) translateY(0);
+}
+
+/* Digital Pass with Gold Hologram Strip */
+.ticket-pass {
+  background: var(--bg-surface);
+  border: 2px dashed var(--bee-black);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.ticket-hologram-strip {
+  height: 5px;
+  background: linear-gradient(90deg, #F5C518, #FF9800, #4CAF50, #2196F3, #9C27B0, #F5C518);
+  background-size: 200% 100%;
+  animation: holo-shine 4s linear infinite;
+  margin: -24px -24px 20px -24px;
+}
+@keyframes holo-shine {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* Toast Shelf (Principle 12: Arcs) */
+.toast-shelf {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1100;
+  pointer-events: none;
+}
+.toast {
+  background: var(--bee-black);
+  color: var(--accent-gold);
+  border: 1px solid var(--accent-gold);
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+  transform: translateX(120%) scale(0.9);
+  opacity: 0;
+  transition: transform var(--dur-norm) var(--ease-arc), opacity var(--dur-norm);
+}
+.toast.show {
+  transform: translateX(0) scale(1);
+  opacity: 1;
+}
+
+/* Dashboards Styling */
+.dashboard-container {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+.dashboard-role-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 12px;
+}
+.dash-tab-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px 12px;
+  position: relative;
+}
+.dash-tab-btn.active {
+  color: var(--text-primary);
+}
+.dash-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -13px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent-gold);
+}
+
+.metric-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin-bottom: 32px;
+}
+.metric-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  transition: border-color var(--dur-fast);
+}
+.metric-card:hover {
+  border-color: var(--border-strong);
+}
+.metric-big-num {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+/* Mobile Nav */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--bg-surface-translucent);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 85;
+}
+@media (min-width: 768px) {
+  .mobile-bottom-nav { display: none; }
+}
+.mobile-nav-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  cursor: pointer;
+}
+.mobile-nav-btn.active {
+  color: var(--text-primary);
+  font-weight: 700;
+}
